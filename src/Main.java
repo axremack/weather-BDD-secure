@@ -5,6 +5,8 @@ import WeatherParsing.WeatherFetcher;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class Main {
@@ -15,6 +17,15 @@ public class Main {
         if (args.length != 1) {
             System.err.println("Usage : /usr/lib/jvm/java-11-openjdk-amd64/bin/java -Dfile.encoding=UTF-8 -classpath /mnt/c/Users/axrem/Documents/ZZ3/Java/TP6/out/production/TP6:/mnt/c/Users/axrem/Downloads/sqlite-jdbc-3.32.3.2.jar:/mnt/c/Users/axrem/Documents/ZZ3/Java/gson-2.8.8.jar Main city_name\n");
             throw new IllegalArgumentException();
+        }
+
+        Pattern p;
+        Matcher m;
+        // Regex searching for digit or special character except "-"
+        p = Pattern.compile("\\d");
+        m = p.matcher("Clermont");
+        if(m.find()) {
+            System.out.println("motif trouvé");
         }
 
         try {
