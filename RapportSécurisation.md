@@ -167,25 +167,61 @@ public static void dropTable() throws SQLException {
 
 <br/>
 
-## ATTAQUE 4 - Principe 3-9 / INJECT-9 : Prevent injection of exceptional floating point values ???
+## Guideline 4-1 / EXTEND-1: Limit the accessibility of classes, interfaces, methods, and fields
 ### Descriptif de vulnérabilité
 
 
 ### Code original avec la vulnérabilité
+Les champs `public static` de ce programme n'étaient jamais déclarés en `final`.
 
+```Java
+public class DBManager {
+    public static String url;
 
-### Version corrigée avec corrections mises en avant
+    // Méthodes de la classe
+}
+```
 
+### Version corrigée
 
-## ATTAQUE 5
+```diff
+public class DBManager {
++    private static String url;
+
+    // Méthodes de la classe
+}
+```
+
+<br/>
+
+## Guideline 6-9 / MUTABLE-9: Make public static fields final
 ### Descriptif de vulnérabilité
+Les attributs déclarés publiques et statiques non-finaux peuvent être accédés et redéfinis par les classes appelantes. Les accès et modifications ne sont alors pas contrôlées et les valeurs redéfinies ne peuvent pas être validées.
 
 
 ### Code original avec la vulnérabilité
+Les champs `public static` de ce programme n'étaient jamais déclarés en `final`, ce qui pouvait autoriser la modification ultérieure.
 
+```Java
+public class WeatherFetcher {
+    public static String api_key = "47631728a917d56bffde4b26e7e461e3";
 
-### Version corrigée avec corrections mises en avant
+    // Méthodes de la classe
+}
+```
 
+### Version corrigée
+La modification ultérieure n'est plus autorisée.
+
+```diff
+public class WeatherFetcher {
++    public static final String api_key = "47631728a917d56bffde4b26e7e461e3";
+
+    // Méthodes de la classe
+}
+```
+
+<br/>
 
 ## ATTAQUE 6
 ### Descriptif de vulnérabilité
