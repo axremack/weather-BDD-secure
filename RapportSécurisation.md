@@ -18,13 +18,15 @@ Principe 0-8 / FUNDAMENTALS-8 : Secure third-party code ????
 Principe 1-2 / DOS-2 : Release resources in all cases
 
 
-## ATTAQUE 1 - Guideline 3-1 / INJECT-1: Generate valid formatting
+## Guideline 3-1 / INJECT-1: Generate valid formatting
 
 ### Descriptif de vulnérabilité 
 Le programme prend en entrée un paramètre entrée par l'utilisateur : le nom de la ville. Aucun contrôle sur le format de l'entrée n'est fait.
 
 ### Code original avec la vulnérabilité
 En donnant un paramètre qui n'est pas une ville (à base de chiffres par exemple), la réponse est une erreur SQL. Il faudrait vérifier les problèmes avant pour éviter d'éventuelles injections.
+
+![img.png](resources/img.png)
 
 Le code responsable est : 
 ```Java
@@ -74,19 +76,17 @@ public class Main {
 
 
 
-## ATTAQUE 2 - Principe 2-1 / CONFIDENTIAL-1 : Purge sensitive information from exceptions
-### Descriptif de vulnérabilité : 
-Lors d'une mauvaise ville entrée en paramètre, une exception est affichée à l'utilisateur. Ca peut donner des informations à un attaquant.
+## Guideline 2-1 / CONFIDENTIAL-1 : Purge sensitive information from exceptions
+### Descriptif de vulnérabilité
+Lorsqu'une ville invalide est entrée en paramètre, une exception est affichée à l'utilisateur avec sa trace d'éxécution et d'autres informations. Cela peut donner des informations utile à la mise en place d'une attaque à un acteur malveillant.
 
+### Code original avec la vulnérabilité
 
-### Code original avec la vulnérabilité : 
-
-![[Pasted image 20211129184513.png]]
 
 Les exceptions ont un contenu assez vague mais qui donne déja des informations.
 
 
-### Version corrigée avec corrections mises en avant
+### Version corrigée
 On pourrait, en production, afficher seulement un message générique "Erreur". Le mieux serait de mettre une variable permettant d'adapter la précision des message à l'environnement.
 
 
