@@ -169,11 +169,33 @@ public static void dropTable() throws SQLException {
 
 ## Guideline 4-1 / EXTEND-1: Limit the accessibility of classes, interfaces, methods, and fields
 ### Descriptif de vulnérabilité
-
+Mettre les attributs et méthodes en `public` empêche un quelconque contrôle d'accès et peut donc autoriser des utilisateurs du code à contourner l'interface qui leur est destinée.
 
 ### Code original avec la vulnérabilité
-Les champs `public static` de ce programme n'étaient jamais déclarés en `final`.
+La plupart des attributs et méthodes des classes étaient publiques alors qu'il n'était parfois pas nécessaire à des classes extérieures d'y accéder. Des accesseurs publics non-nécessaires étaient aussi proposés pour les attributs privés.
 
+Voilà un exemple de classe possédant un attribut privé mais des accesseurs publics non-nécessaires :
+```Java
+public class Temperature {
+    private double temp;
+
+    // Constructeur
+    public Temperature(double temp) {
+        this.temp = temp;
+    }
+
+    // Getters et setters
+    public double getTemp() {
+        return temp;
+    }
+
+    public void setTemp(double temp) {
+        this.temp = temp;
+    }
+}
+```
+
+D'un autre côté, voici une classe présentant des attributs publics sans raison :
 ```Java
 public class DBManager {
     public static String url;
@@ -183,7 +205,29 @@ public class DBManager {
 ```
 
 ### Version corrigée
+Pour la classe avec des accesseurs non-nécessaires, les droits d'accès ont été revus et les méthodes publiques ont été mises en `final` afin d'empêcher la redéfinition éventuelle dans des classes filles :
+```diff
+public class Temperature {
+    private double temp;
 
+    // Constructeur
++    protected Temperature(double temp) {
+        this.temp = temp;
+    }
+
+    // Getters et setters
++    public final double getTemp() {
+        return temp;
+    }
+
++    private void setTemp(double temp) {
+        this.temp = temp;
+    }
+}
+```
+*<u>Note</u> : Les autres classes touchées par ce type de changement sont les classes CityWeather, Wind, DMManager et WeatherFetcher.*
+
+Pour la classe avec un attribut public sans justification : 
 ```diff
 public class DBManager {
 +    private static String url;
@@ -191,12 +235,13 @@ public class DBManager {
     // Méthodes de la classe
 }
 ```
+*<u>Note</u> : On n'ajoute pas d'accesseurs pour cet attribut puisqu'il n'est fait que pour être utilisé en interne à la classe.*
 
 <br/>
 
 ## Guideline 6-9 / MUTABLE-9: Make public static fields final
 ### Descriptif de vulnérabilité
-Les attributs déclarés publiques et statiques non-finaux peuvent être accédés et redéfinis par les classes appelantes. Les accès et modifications ne sont alors pas contrôlées et les valeurs redéfinies ne peuvent pas être validées.
+Les attributs déclarés publics et statiques non-finaux peuvent être accédés et redéfinis par les classes appelantes. Les accès et modifications ne sont alors pas contrôlées et les valeurs redéfinies ne peuvent pas être validées.
 
 
 ### Code original avec la vulnérabilité
