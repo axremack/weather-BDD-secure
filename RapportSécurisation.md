@@ -26,7 +26,7 @@ Le programme prend en entrée un paramètre entrée par l'utilisateur : le nom d
 ### Code original avec la vulnérabilité
 En donnant un paramètre qui n'est pas une ville (à base de chiffres par exemple), la réponse est une erreur SQL. Il faudrait vérifier les problèmes avant pour éviter d'éventuelles injections.
 
-![img.png](resources/img.png)
+![img.png](resources/sql_exception.png)
 
 Le code responsable est : 
 ```Java
@@ -78,16 +78,51 @@ public class Main {
 
 ## Guideline 2-1 / CONFIDENTIAL-1 : Purge sensitive information from exceptions
 ### Descriptif de vulnérabilité
-Lorsqu'une ville invalide est entrée en paramètre, une exception est affichée à l'utilisateur avec sa trace d'éxécution et d'autres informations. Cela peut donner des informations utile à la mise en place d'une attaque à un acteur malveillant.
+Lorsqu'une ville invalide est entrée en paramètre ou qu'une autre erreur de traitement se produit (requête SQL invalide, problème de driver, etc...), une exception est affichée à l'utilisateur avec sa trace d'éxécution notamment. Cela peut donner des informations utiles à la mise en place d'une attaque par un acteur malveillant.
+
+![img.png](resources/stacktrace.png)
 
 ### Code original avec la vulnérabilité
+Les exceptions sont affichées avec leur trace d'éxécution ce qui n'est pas une bonne pratique en production.
 
-
-Les exceptions ont un contenu assez vague mais qui donne déja des informations.
-
+```Java
+public class Main {
+    public static void main(String[] args) {
+        // Traitement préliminaire
+        
+        try {
+            // Appel en base de données et traitement
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
 
 ### Version corrigée
-On pourrait, en production, afficher seulement un message générique "Erreur". Le mieux serait de mettre une variable permettant d'adapter la précision des message à l'environnement.
+On rend la gestion des exceptions plus précise en affichant un message personnalisé pour les types d'exceptions lancées par notre programme. Ce message est assez général mais donne quand même quelques informations.
+
+```diff
+public class Main {
+    public static void main(String[] args) {
+        // Traitement préliminaire
+        
+        try {
+            // Appel en base de données et traitement
++        } catch (IllegalArgumentException e) {
++            System.err.println("Usage : /usr/lib/jvm/java-11-openjdk-amd64/bin/java -Dfile.encoding=UTF-8 -classpath /mnt/c/Users/axrem/Documents/ZZ3/Java/TP6/out/production/TP6:/mnt/c/Users/axrem/Downloads/sqlite-jdbc-3.32.3.2.jar:/mnt/c/Users/axrem/Documents/ZZ3/Java/gson-2.8.8.jar Main city_name\n");
++        } catch (SQLException e){
++            System.err.println("Error : invalid SQL request");
++        } catch (ClassNotFoundException e) {
++            System.err.println("Error : invalid city entered");
++        } catch (Exception e) {
++            System.err.println("Error");
++        }
+    }
+}
+```
+
+Ce type de message est adapté à une utilisation en phase de développement, quand il est encore nécessaire de faire du debug et donc de comprendre les exceptions lancées. Pour la mise en production, il serait préférable de rendre le contenu des exceptions complètement opaque, en ne mettant qu'un message générique "Erreur" quel que soit le type d'exception lancée par exemple, afin de ne laisser transparaitre aucune information.
 
 
 ## ATTAQUE 3 - Principe 3-2 / INJECT-2 : Avoid dynamic SQL
