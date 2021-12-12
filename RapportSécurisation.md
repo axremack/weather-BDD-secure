@@ -38,13 +38,10 @@ public class Main {
             throw new IllegalArgumentException();
         }
   
-        try {  
-            DBManager d = new DBManager(url);
-            d.deleteOldData(); // Deleting data if too old
-            // boolean found = d.findInDB(args[0]);
-            ...
+        try {
+            // Appel en base de donnée et traitement
         }
-        ...
+        // Gestion des exceptions
     }
 }
 ```
@@ -59,7 +56,7 @@ public class Main {
     public static void main(String[] args) {
         String url = "jdbc:sqlite:src/Database/weather.db";
         CityWeather weather = null;
--
+        
 +        Pattern p;
 +        p = Pattern.compile("[^a-zA-Z!-]"); // Regex searching for digit or special character except "-"
 
@@ -67,9 +64,9 @@ public class Main {
 +            if (args.length != 1 || p.matcher(args[0]).find()) {
 +                throw new IllegalArgumentException();
 +            }
-            ...
+            // Appel en base de donnée et traitement
         }
-        ...
+        // Gestion des exceptions
     }
 }
 ```
