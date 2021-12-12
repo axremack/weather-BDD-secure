@@ -19,82 +19,61 @@ Principe 1-2 / DOS-2 : Release resources in all cases
 
 
 ## ATTAQUE 1 - Guideline 3-1 / INJECT-1: Generate valid formatting
-## Guideline 5-1 / INPUT-1: Validate inputs ???
 
 ### Descriptif de vulnérabilité 
-Le programme prends en entrée un paramètre entrée par l'utilisateur : le nom de la ville
+Le programme prend en entrée un paramètre entrée par l'utilisateur : le nom de la ville. Aucun contrôle sur le format de l'entrée n'est fait.
 
-### Code original avec la vulnérabilité 
-
-On donne un paramètre qui n'est pas une ville.
-
-La réponse est une erreur SQL, il faudrait vérifier les problèmes avant pour éviter d'éventuelles injections.
+### Code original avec la vulnérabilité
+En donnant un paramètre qui n'est pas une ville (à base de chiffres par exemple), la réponse est une erreur SQL. Il faudrait vérifier les problèmes avant pour éviter d'éventuelles injections.
 
 Le code responsable est : 
 ```Java
 public class Main {  
     public static void main(String[] args) {  
-        String url = "jdbc:sqlite:src/Database/weather.db";  
-		CityWeather weather = null;  
-  
-		if (args.length != 1) {  
-    		System.err.println(...);  
- 			throw new IllegalArgumentException();  
-		}
+        String url = "jdbc:sqlite:src/Database/weather.db";
+        CityWeather weather = null;  
+        
+        if (args.length != 1) {
+            System.err.println(...);
+            throw new IllegalArgumentException();
+        }
   
         try {  
-            DBManager d = new DBManager(url);  
- 			d.deleteOldData(); // Deleting data if too old  
- 			boolean found = d.findInDB(args[0]);
-			... 
-		}
-		...
-	}
+            DBManager d = new DBManager(url);
+            d.deleteOldData(); // Deleting data if too old
+            // boolean found = d.findInDB(args[0]);
+            ...
+        }
+        ...
+    }
 }
-
 ```
 
-La valeur null est gérée (if args.length != 1 --> throws exception)
+*<u>Note</u> : La valeur null est gérée.*
 
+### Version corrigée
+On a ajouté une regex pour vérifier le format du nom de ville : on empêche la présence de chiffres et de caractères spéciaux, excepté le "-". Une exception est lancée si le nom entré ne correspond pas au format attendu.
 
-
-
-
-### Version corrigée avec corrections mises en avant 
 ```diff
-public class Main {  
-    public static void main(String[] args) {  
-        String url = "jdbc:sqlite:src/Database/weather.db";  
-		CityWeather weather = null;  
-  
-		if (args.length != 1) {  
-    		System.err.println(...);  
- 			throw new IllegalArgumentException();  
-		}
-		
-		Pattern p;
-        Matcher m;
-+        // Regex searching for digit or special character except "-"
-+        p = Pattern.compile("\\d");
-+        m = p.matcher("Clermont");
-+        if(m.find()) {
-+            System.out.println("motif trouvé");
-+        }
+public class Main {
+    public static void main(String[] args) {
+        String url = "jdbc:sqlite:src/Database/weather.db";
+        CityWeather weather = null;
+-
++        Pattern p;
++        p = Pattern.compile("[^a-zA-Z!-]"); // Regex searching for digit or special character except "-"
 
-  
-        try {  
-            DBManager d = new DBManager(url);  
- 			d.deleteOldData(); // Deleting data if too old  
- 			boolean found = d.findInDB(args[0]);
-			... 
-		}
-		...
-	}
+        try {
++            if (args.length != 1 || p.matcher(args[0]).find()) {
++                throw new IllegalArgumentException();
++            }
+            ...
+        }
+        ...
+    }
 }
-
 ```
 
-On va ajouter une regex pour vérifier la forme du nom de ville (éviter les chiffres et les caractères spéciaux sauf le "-").
 
 
 
