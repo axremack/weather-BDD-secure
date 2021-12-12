@@ -1,9 +1,12 @@
 # ♨ TP9 Java - Reprise du TP6 pour sécurisation
+
 Le TP6 consiste en un programme exécutable via la ligne de commande permettant d'afficher la météo actuelle d'une ville donnée en argument. La récupération des informations se fait en base de données si des informations assez récentes sont déja stockées ou via le réseau sinon.
 
 L'idée est d'accroitre la rapidité de la récupération et de l'affichage des données ainsi que d'éviter des appels réseaux constant (permettant une économie de ressource ainsi qu'une utilisation offline). Les données trop anciennes (+ d'un jour) sont supprimées de la base de données automatiquement.
 
 Les informations météorologiques sont fournies par https://openweathermap.org/.
+
+<span style="color:darkred">**Concernant la sécurisation, un rapport détaillé des changements effectués dans le code est disponible dans le fichier *RapportSécurisation.md*.**</span>
 
 ## ✨ Installation
 Télécharger le projet ou cloner le dépôt en local.
