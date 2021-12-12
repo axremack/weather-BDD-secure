@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 public class WeatherFetcher {
     public static final String api_key = "47631728a917d56bffde4b26e7e461e3";
 
-    public CityWeather getWeatherIn(String city) throws Exception {
+    public final CityWeather getWeatherIn(String city) throws Exception {
         String line;
         String json;
         HttpURLConnection urlConnection = null ;

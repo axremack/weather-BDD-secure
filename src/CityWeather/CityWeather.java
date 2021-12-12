@@ -23,35 +23,33 @@ public class CityWeather {
     }
 
     // Getters et setters
-    public Temperature getTemp() { return temp; }
+    public final Temperature getTemp() { return temp; }
 
-    public void setTemp(Temperature temp) { this.temp = temp; }
+    private void setTemp(Temperature temp) { this.temp = temp; }
 
-    public Wind getWind() {
-        return wind;
-    }
+    public final Wind getWind() { return wind;}
 
-    public void setWind(Wind wind) {
+    private void setWind(Wind wind) {
         this.wind = wind;
     }
 
-    public String getCity() {
+    public final String getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    private void setCity(String city) {
         this.city = city;
     }
 
-    public Integer getDT() {
+    public final Integer getDT() {
         return dt;
     }
 
-    public void setDT(Integer dt) {
+    private void setDT(Integer dt) {
         this.dt = dt;
     }
 
-    public String toString() {
+    public final String toString() {
         StringBuilder summary = new StringBuilder();
         return summary
                 .append("Weather fetched at : ").append(new Date(Long.parseLong(dt.toString()) * 1000)).append("\n")

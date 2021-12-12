@@ -5,16 +5,16 @@ public class Wind {
     private double speed;
 
     // Constructeurs
-    public Wind(double speed) {
+    protected Wind(double speed) {
         this.speed = speed;
     }
 
     // Getters et setters
-    public double getSpeed() {
+    public final double getSpeed() {
         return speed;
     }
 
-    public void setSpeed(double speed) {
+    private void setSpeed(double speed) {
         this.speed = speed;
     }
 }
