@@ -15,8 +15,10 @@ Faciles :
 
 Principe 0-6 / FUNDAMENTALS-6 : Encapsulate ????
 Principe 0-8 / FUNDAMENTALS-8 : Secure third-party code ????
-Principe 1-2 / DOS-2 : Release resources in all cases
+Guideline 3-2 / INJECT-2 : Avoid dynamic SQL : déja prepared statement
 
+
+<br/>
 
 ## Guideline 3-1 / INJECT-1: Generate valid formatting
 
@@ -73,8 +75,7 @@ public class Main {
 }
 ```
 
-
-
+<br/>
 
 ## Guideline 2-1 / CONFIDENTIAL-1 : Purge sensitive information from exceptions
 ### Descriptif de vulnérabilité
@@ -125,15 +126,46 @@ public class Main {
 Ce type de message est adapté à une utilisation en phase de développement, quand il est encore nécessaire de faire du debug et donc de comprendre les exceptions lancées. Pour la mise en production, il serait préférable de rendre le contenu des exceptions complètement opaque, en ne mettant qu'un message générique "Erreur" quel que soit le type d'exception lancée par exemple, afin de ne laisser transparaitre aucune information.
 
 
-## ATTAQUE 3 - Principe 3-2 / INJECT-2 : Avoid dynamic SQL
-### Descriptif de vulnérabilité
+<br/>
 
+## Guideline 1-2 / DOS-2 : Release resources in all cases
+### Descriptif de vulnérabilité
+Dans ce TP, il est nécessaire de manipuler des bases de données. Pour cela, il est obligatoire d'utiliser des objets Connection, ResultSet, Statement, etc... Tout ces objets doivent être fermés à la fin de leur utilisation.
 
 ### Code original avec la vulnérabilité
+Quelques oublis de fermeture des ressources étaient restés dans le code. Voila un exemple de fonction de la classe DBManager où les ressources ne sont pas fermées à la fin de leur utilisation.
+
+```Java
+public static void dropTable() {
+    String query = "DROP TABLE IF EXISTS weather;";
+
+    try {
+        Connection conn = DriverManager.getConnection(url);
+        Statement s = conn.createStatement();
+        s.execute(query);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+```
+
+### Version corrigée
+```diff
+public static void dropTable() throws SQLException {
+    String query = "DROP TABLE IF EXISTS weather;";
+    Connection conn = DriverManager.getConnection(url);
+    Statement s = conn.createStatement();
+    s.execute(query);
+
++    conn.close();
++    s.close();
+}
+```
+
+*<u>Note</u> : Si les ressources ne sont pas fermées manuellement à la fin de leur utilisation, le garbage collector s'en occupera automatiquement mais c'est tout de même une bonne pratique de libérer les objets utilisés.*
 
 
-### Version corrigée avec corrections mises en avant
-
+<br/>
 
 ## ATTAQUE 4 - Principe 3-9 / INJECT-9 : Prevent injection of exceptional floating point values ???
 ### Descriptif de vulnérabilité
