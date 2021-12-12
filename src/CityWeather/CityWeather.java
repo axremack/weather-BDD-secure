@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
-public class CityWeather {
+public final class CityWeather {
     @SerializedName("name")
     private String city;
     private Integer dt;
@@ -15,7 +15,7 @@ public class CityWeather {
     private Wind wind;
 
     // Constructeur
-    public CityWeather(Temperature temp, Wind wind, String city, Integer dt) {
+    private CityWeather(Temperature temp, Wind wind, String city, Integer dt) {
         this.temp = temp;
         this.wind = wind;
         this.city = city;
@@ -23,17 +23,17 @@ public class CityWeather {
     }
 
     // Getters et setters
-    public final Temperature getTemp() { return temp; }
+    public Temperature getTemp() { return temp; }
 
     private void setTemp(Temperature temp) { this.temp = temp; }
 
-    public final Wind getWind() { return wind;}
+    public Wind getWind() { return wind;}
 
     private void setWind(Wind wind) {
         this.wind = wind;
     }
 
-    public final String getCity() {
+    public String getCity() {
         return city;
     }
 
@@ -41,7 +41,7 @@ public class CityWeather {
         this.city = city;
     }
 
-    public final Integer getDT() {
+    public Integer getDT() {
         return dt;
     }
 
@@ -49,7 +49,7 @@ public class CityWeather {
         this.dt = dt;
     }
 
-    public final String toString() {
+    public String toString() {
         StringBuilder summary = new StringBuilder();
         return summary
                 .append("Weather fetched at : ").append(new Date(Long.parseLong(dt.toString()) * 1000)).append("\n")

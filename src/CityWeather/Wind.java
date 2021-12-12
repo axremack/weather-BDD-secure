@@ -1,16 +1,16 @@
 package CityWeather;
 
-public class Wind {
+public final class Wind {
     // Paramètres obligatoires
     private double speed;
 
     // Constructeurs
-    protected Wind(double speed) {
+    private Wind(double speed) {
         this.speed = speed;
     }
 
     // Getters et setters
-    public final double getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 

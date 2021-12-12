@@ -6,14 +6,14 @@ import java.util.List;
 
 import static java.lang.String.valueOf;
 
-public class DBManager {
+public final class DBManager {
     private static String url;
 
     public DBManager(String url_given) {
         DBManager.url = url_given;
     }
 
-    public final static void createWeatherTable() throws SQLException, ClassNotFoundException {
+    public static void createWeatherTable() throws SQLException, ClassNotFoundException {
         StringBuilder query = new StringBuilder();
         query.append("CREATE TABLE IF NOT EXISTS weather (\n")
                 .append("fetched_at INTEGER NOT NULL,\n")
@@ -33,7 +33,7 @@ public class DBManager {
         conn.close();
     }
 
-    public final static void insertValues(List<Object> list_values) throws SQLException, ClassNotFoundException {
+    public static void insertValues(List<Object> list_values) throws SQLException, ClassNotFoundException {
         StringBuilder query = new StringBuilder();
         query.append("INSERT INTO weather(\n")
                 .append("fetched_at,\n")
@@ -58,7 +58,7 @@ public class DBManager {
         conn.close();
     }
 
-    public final static void dropTable() throws SQLException {
+    public static void dropTable() throws SQLException {
         String query = "DROP TABLE IF EXISTS weather;";
         Connection conn = DriverManager.getConnection(url);
         Statement s = conn.createStatement();
@@ -68,7 +68,7 @@ public class DBManager {
         s.close();
     }
 
-    public final static void displayDB() throws SQLException {
+    public static void displayDB() throws SQLException {
         String query = "SELECT fetched_at, city, current_temperature, wind_speed FROM weather;";
         Connection conn = DriverManager.getConnection(url);
         Statement s = conn.createStatement();
@@ -86,7 +86,7 @@ public class DBManager {
         rs.close();
     }
 
-    public final static void displayDBOrderedBy(String param) throws SQLException {
+    public static void displayDBOrderedBy(String param) throws SQLException {
         String query = "SELECT fetched_at, city, current_temperature, wind_speed FROM weather ORDER BY " + param + ";";
         Connection conn = DriverManager.getConnection(url);
         Statement s = conn.createStatement();
@@ -104,7 +104,7 @@ public class DBManager {
         rs.close();
     }
 
-    public static final void deleteOldData() throws SQLException {
+    public static void deleteOldData() throws SQLException {
         long epochDate = System.currentTimeMillis()/1000 - 86400; // 1 day before today
         String query = "DELETE FROM weather WHERE fetched_at < " + epochDate + ";";
         Connection conn = DriverManager.getConnection(url);
@@ -116,7 +116,7 @@ public class DBManager {
 
     }
 
-    public static final boolean findInDB(String city) throws SQLException {
+    public static boolean findInDB(String city) throws SQLException {
         String query = "SELECT fetched_at, city, current_temperature, wind_speed FROM weather WHERE city LIKE \"%" + city + "%\";";
         boolean found = false;
 

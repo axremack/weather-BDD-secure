@@ -1,15 +1,15 @@
 package CityWeather;
 
-public class Temperature {
+public final class Temperature {
     private double temp;
 
     // Constructeur
-    protected Temperature(double temp) {
+    private Temperature(double temp) {
         this.temp = temp;
     }
 
     // Getters et setters
-    public final double getTemp() { return temp; }
+    public double getTemp() { return temp; }
 
     private void setTemp(double temp) {
         this.temp = temp;
