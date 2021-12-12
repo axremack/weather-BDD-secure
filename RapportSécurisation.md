@@ -205,7 +205,7 @@ public class DBManager {
 ```
 
 ### Version corrigée
-Pour la classe avec des accesseurs non-nécessaires, les droits d'accès ont été revus et les méthodes publiques ont été mises en `final` afin d'empêcher la redéfinition éventuelle dans des classes filles :
+Pour la classe avec des accesseurs non-nécessaires, les droits d'accès ont été revus :
 ```diff
 public class Temperature {
     private double temp;
@@ -216,7 +216,7 @@ public class Temperature {
     }
 
     // Getters et setters
-+    public final double getTemp() {
+    public double getTemp() {
         return temp;
     }
 
@@ -225,7 +225,7 @@ public class Temperature {
     }
 }
 ```
-*<u>Note</u> : Les autres classes touchées par ce type de changement sont les classes CityWeather, Wind, DMManager et WeatherFetcher.*
+*<u>Note</u> : Les autres classes touchées par ce type de changement sont les classes CityWeather et Wind.*
 
 Pour la classe avec un attribut public sans justification : 
 ```diff
@@ -268,13 +268,75 @@ public class WeatherFetcher {
 
 <br/>
 
-## ATTAQUE 6
+## Guideline 4-5 / EXTEND-5: Limit the extensibility of classes and methods
 ### Descriptif de vulnérabilité
-
+L'héritage peut être utilisé pour détourner le fonctionnement classique des classes ou méthodes afin de réaliser des actions malicieuses. Il faut au maximum préférer la composition à l'héritage et donc empêcher les classes et méthodes d'être redéfinies.
 
 ### Code original avec la vulnérabilité
+La classe et ses méthodes publiques pourraient être redéfinies dans des classes filles :
+```Java
+public class CityWeather {
+    @SerializedName("name")
+    private String city;
+    private Integer dt;
 
+    @SerializedName("main")
+    private Temperature temp;
 
-### Version corrigée avec corrections mises en avant
+    private Wind wind;
 
+    // Constructeur
+    public CityWeather(Temperature temp, Wind wind, String city, Integer dt) {
+        this.temp = temp;
+        this.wind = wind;
+        this.city = city;
+        this.dt = dt;
+    }
 
+    // Getters et setters
+    public Temperature getTemp() { return temp; }
+
+    private void setTemp(Temperature temp) { this.temp = temp; }
+
+    // Autres accesseurs
+    
+    public String toString() {
+        // Contenu de la méthode
+    }
+}
+```
+
+### Version corrigée
+La classe est déclarée en final (pas besoin de déclarer les méthodes en final du coup) et on cache le constructeur :
+```diff
++public final class CityWeather {
+    @SerializedName("name")
+    private String city;
+    private Integer dt;
+
+    @SerializedName("main")
+    private Temperature temp;
+
+    private Wind wind;
+
+    // Constructeur
++    private CityWeather(Temperature temp, Wind wind, String city, Integer dt) {
+        this.temp = temp;
+        this.wind = wind;
+        this.city = city;
+        this.dt = dt;
+    }
+
+    // Getters et setters
+    public Temperature getTemp() { return temp; }
+
+    private void setTemp(Temperature temp) { this.temp = temp; }
+
+    // Autres accesseurs
+
+    public String toString() {
+        ...
+    }
+}
+```
+*<u>Note</u> : Des modifications similaires ont été faites dans les classes DBManager, Wind, Temperature et WeatherFetcher.*
